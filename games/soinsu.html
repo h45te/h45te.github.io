@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>
+            素因数分解
+        </title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <p>素因数分解をします</p>
+        <p>
+            調べる数：<input type="number" id="soinsu_input"><br>
+            <input type="button" id="soinsu_start" value="素因数分解する">
+        </p>
+        <p>結果：<span id="soinsu_result">計算ボタンを押してください</span></p>
+        <hr>
+        素因数分解は英語で「prime factorization」らしいです。かっこいいね。<br>
+        <a href="../index.html">戻る</a>
+        <script>
+            let user_input = 0;
+            let memory = 0;
+            let check_number = 0;
+            let result = "";
+
+            function check() {
+                let stacks = 0;
+
+                while (memory % check_number == 0) {
+                    stacks += 1;
+                    memory /= check_number;
+                }
+
+                if (stacks >= 1) {
+                    if (result != user_input + "=") {
+                        result += "*";
+                    }
+
+                    result += check_number;
+                    if (stacks > 1) {
+                        result += "^" + stacks;
+                    }
+                }
+            }
+
+            var btn = document.getElementById('soinsu_start');
+            btn.addEventListener('click', function() {
+                user_input = document.getElementById('soinsu_input').value;
+                if ((user_input < 2) || (user_input % 1 != 0)) {
+                    document.getElementById('soinsu_result').textContent = '無効な値が入力されました';
+                    return;
+                } 
+                memory = user_input;
+                result = user_input + "=";
+
+                check_number = 2;
+                check();
+
+                check_number = 3;
+                while (memory != 1) {
+                    check();
+                    check_number += 2;
+                }
+
+                if (result == user_input + "=" + user_input) {
+                    result = user_input + "は素数です";
+                }
+                document.getElementById('soinsu_result').textContent = result;
+            }, false);
+        </script>
+    </body>
+</html>

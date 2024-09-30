@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>
+            マイクラ地図座標計算機
+        </title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <p>Minecraft用地図座標計算機</p>
+        <p>
+            地図を展開した地点のX座標:<input id="x_input" type="number"><br>
+            地図を展開した地点のZ座標:<input id="z_input" type="number"><br>
+            地図の大きさレベル(1~5):<input id="size_input" type="range" min="1" max="5" step="1" value="1"><br>
+            <input id="start" type="button" value="計算する">
+        </p>
+        <p>
+            実行結果<br>
+            地図の中心X座標:<span id="xc_output"></span><br>
+            地図の中心Z座標:<span id="zc_output"></span><br>
+            地図の表示X範囲:<span id="xr_output"></span><br>
+            地図の表示Z範囲:<span id="zr_output"></span>
+        </p>
+        <hr>
+        マイクラで地図を使う時に、中心座標や表示範囲を求められます。<br>
+      	座標計算式は<a href="https://minecraftjapan.miraheze.org/wiki/%E5%9C%B0%E5%9B%B3#%E5%9C%B0%E5%9B%B3%E3%81%AE%E7%B8%AE%E5%B0%BA%E3%81%A8%E6%8B%A1%E5%BC%B5">Minecraft Japan Wiki</a>のものを使用しています。<br>
+        <a href="../index.html">戻る</a>
+        <script>
+            let btn = document.getElementById('start');
+            btn.addEventListener('click', function() {
+                let x_js = Math.round(document.getElementById('x_input').value);
+                let z_js = Math.round(document.getElementById('z_input').value);
+                const size_js = Number(document.getElementById('size_input').value);
+
+                x_js = Math.round(x_js / 128) * 128;
+                z_js = Math.round(z_js / 128) * 128;
+
+                for (let i = 1; i < size_js; i++) {
+                    x_js = Math.floor(x_js / 2**(7+i)) * 2**(7+i) - 64 + 2**(7+i);
+                    z_js = Math.floor(z_js / 2**(7+i)) * 2**(7+i) - 64 + 2**(7+i);
+                }
+
+                document.getElementById('xc_output').textContent = x_js;
+                document.getElementById('zc_output').textContent = z_js;
+              	if (x_js >= 0) {
+                  	document.getElementById('xr_output').textContent = String(x_js - 2**(5+size_js)) + '~' + String(x_js + 2**(5+size_js) - 1);
+                }	else {
+                  	document.getElementById('xr_output').textContent = String(x_js - 2**(5+size_js) + 1) + '~' + String(x_js + 2**(5+size_js));
+                }
+                if (z_js >= 0) {
+                  	document.getElementById('zr_output').textContent = String(z_js - 2**(5+size_js)) + '~' + String(z_js + 2**(5+size_js) - 1);
+                }	else {
+                  	document.getElementById('zr_output').textContent = String(z_js - 2**(5+size_js) + 1) + '~' + String(z_js + 2**(5+size_js));
+                }
+            })
+        </script>
+    </body>
+</html>

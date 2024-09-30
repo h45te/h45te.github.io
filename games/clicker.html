@@ -1,0 +1,199 @@
+<html>
+    <head>
+        <title>
+            はるまきクリッカー
+        </title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <h2>はるまきクリッカーへようこそ！</h2>
+        <p>
+            <span id="text_h">Loading...</span><br>
+            <span id="text_g">Loading...</span><br>
+            <span id="text_s">Loading...</span><br>
+            <span id="textcost_g">Loading...</span><br>
+            <span id="textcost_s">Loading...</span>
+        </p>
+        <p id="stat">
+            ボタンをタップ（クリック）ではるまきを製造
+        </p>
+        <input type="button" id="btn_harumaki" value="はるまき製造" />
+        <input type="button" id="btn_goma" value="胡麻助の強化" />
+        <input type="button" id="btn_saaba" value="さーばの購入" />
+        <hr>
+        <h3>オプション</h3>
+        ローカルストレージによるデータセーブ<input type="checkbox" id="allowsaving" checked="true"><br>
+        ※30秒ごとに自動でセーブされます <input type="button" id="btn_save" value="今すぐセーブする">
+        <hr>
+        <h3>ヘルプ</h3>
+        まずは手動ではるまきを製造しましょう<br>
+        ある程度はるまきが溜まったら胡麻助と契約し、一度に製造できるはるまきの量を増やせます<br>
+        さーばを購入することで、自動ではるまきを製造させることができます<br>
+        たくさんはるまきを製造しましょう!
+        <hr>
+        <h3>クレジット</h3>
+        文字の出演:はるまき鯖民（<a href=https://disboard.org/ja/server/954385805764333578>はるまき鯖ディスボードリンク</a>）<br>
+        プログラミング協力:Taka005氏<br>
+        効果音:魔王魂、OtoLogic
+        <hr>
+        <h3>更新履歴</h3>
+        <div onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
+            <a style="cursor:pointer;">▼ クリックで展開</a>
+        </div>
+        <div id="open" style="display:none;clear:both;">
+            v0.1 2024/04/06 公開
+        </div>
+        <hr>
+        <a href="../index.html">戻る</a>
+
+        <script>
+            /*
+                暇な人コードレビューしてくださいお願いしますできることは何でもしますから
+                実現したいこと
+                ・配列を用いてbuy処理を胡麻とさーばで使えるようにする
+                ・配列を用いてセーブデータの出し入れを自然なものにする
+                ・rewrite処理を何とかする
+                ・コストを計算で求められるようにする
+                ・オフライン収益の実装
+                ・プログレスバー
+                ・マジックナンバーどうにかする
+                ・↑でも全部変数にすると整然としない
+            */
+            let progress = 10;
+            let harumaki = 0;
+            let goma = 1;
+            let saaba = 0;
+            let goma_cost = 10;
+            let saaba_cost = 100;
+
+            let storage = localStorage;
+
+            let unitname = '個';
+            let info_h = '持っているはるまきの数:';
+            let info_g = '持っている胡麻助パワー:';
+            let info_s = '持っているさーばの個数:';
+            let infocost_g = '胡麻助との契約に使うはるまきの数:';
+            let infocost_s = 'さーばの購入に使うはるまきの数:';
+
+            const se_click = new Audio('../sounds/click.mp3');
+            const se_up = new Audio('../sounds/up.mp3');
+            const se_crap = new Audio('../sounds/crap.mp3');
+
+            function make() {
+                harumaki += goma;
+                if (harumaki >= progress) {
+                    document.getElementById('stat').textContent = '持っているはるまきの数が' + progress + '個を越えました!';
+                    progress *= 2;
+                    se_crap.currentTime = 0;
+                    se_crap.play();
+                } else {
+                    document.getElementById('stat').textContent = 'はるまきを製造しました。+' + goma;
+                    se_click.currentTime = 0;
+                    se_click.play();
+                }
+            }
+
+            function buy_goma() {
+                if (harumaki >= goma_cost) {
+                    document.getElementById('stat').textContent = '胡麻助パワーの強化に成功しました! -' + goma_cost;
+                    goma += 1;
+                    harumaki -= goma_cost;
+                    goma_cost += Math.floor(goma_cost/10) + 10;
+                    se_up.currentTime = 0;
+                    se_up.play();
+                } else {
+                    document.getElementById('stat').textContent = 'はるまきが足りません…';
+                    se_click.currentTime = 0;
+                    se_click.play();
+                }
+            }
+
+            function buy_saaba() {
+                if (harumaki >= saaba_cost) {
+                    document.getElementById('stat').textContent = 'さーばの購入に成功しました! -' + saaba_cost;
+                    saaba += 1;
+                    harumaki -= saaba_cost;
+                    saaba_cost += Math.floor(saaba_cost/10) + 150;
+                    se_up.currentTime = 0;
+                    se_up.play();
+                } else {
+                    document.getElementById('stat').textContent = 'はるまきが足りません…';
+                    se_click.currentTime = 0;
+                    se_click.play();
+                }
+            }
+
+            function rewrite() {
+                let msg = info_h + harumaki + unitname;
+                document.getElementById('text_h').textContent = msg;
+                msg = info_g + goma + unitname;
+                document.getElementById('text_g').textContent = msg;
+                msg = infocost_g + goma_cost + unitname;
+                document.getElementById('textcost_g').textContent = msg;
+                msg = info_s + saaba + unitname;
+                document.getElementById('text_s').textContent = msg;
+                msg = infocost_s + saaba_cost + unitname;
+                document.getElementById('textcost_s').textContent = msg;
+            }
+
+            function storagesave() {
+                storage.hc_progress = progress;
+                storage.hc_harumaki = harumaki;
+                storage.hc_goma = goma;
+                storage.hc_saaba = saaba;
+                storage.hc_goma_cost = goma_cost;
+                storage.hc_saaba_cost = saaba_cost;
+                document.getElementById('stat').textContent = 'セーブが完了しました!';
+            }
+
+            let btn;
+
+            btn = document.getElementById('btn_harumaki');
+            btn.addEventListener('click', function() {
+                make();
+                rewrite();
+            }, false);
+
+            btn = document.getElementById('btn_goma');
+            btn.addEventListener('click', function() {
+                buy_goma();
+                rewrite();
+            }, false);
+
+            btn = document.getElementById('btn_saaba');
+            btn.addEventListener('click', function() {
+                buy_saaba();
+                rewrite();
+            }, false);
+
+            btn = document.getElementById('btn_save');
+            btn.addEventListener('click', function() {
+                storagesave();
+            }, false);
+
+            setInterval(() => {
+                harumaki += Math.ceil(saaba * goma * 0.1);
+                rewrite();
+            }, 400);
+
+            setInterval(() => {
+                if (document.getElementById('allowsaving').checked == true) {
+                    storagesave();
+                }
+            }, 30000);
+
+            window.onload = function() {
+                if (storage.hasOwnProperty('hc_progress')) {
+                    progress = Number(storage.hc_progress);
+                    harumaki = Number(storage.hc_harumaki);
+                    goma = Number(storage.hc_goma);
+                    saaba = Number(storage.hc_saaba);
+                    goma_cost = Number(storage.hc_goma_cost);
+                    saaba_cost = Number(storage.hc_saaba_cost);
+                    document.getElementById('stat').textContent = 'ロードが完了しました!'
+                }
+                rewrite();
+            }
+        </script>
+    </body>
+</html>

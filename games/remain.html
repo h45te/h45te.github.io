@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>
+            夏休み残り時間カウントダウン
+        </title>
+        <style>
+            div {
+                padding: 10px;
+              	font-family: "Meiryo";
+                font-weight: lighter;
+            }
+            .tw {
+                background-color: #00aced;
+                display: inline-flex;
+                margin: auto;
+                width:fit-content;
+                height: 7vw;
+                font-size: 6vw;
+                color: white;
+                border-radius: 15px;
+                text-decoration: none;
+            }
+        </style>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div style="font-size: 7vw;">夏休み残り時間：<span id="remain"></span>秒</div>
+        <div class="tw"><a class="tw" id="twlink"></a></div>
+        <script>
+            const twwords = [
+                ['絶望した？','絶望した。'],
+                ['はふー。','はふー。'],
+                ['ウケる？','ウケる。'],
+                ['キャリアを貪る！','残り時間でキャリアを貪る！']
+            ];
+
+            const end = Math.floor(Date.UTC(2024, 7, 19, 8) / 1000);
+            let now = 0;
+            let remainsecond = 0;
+            let remainresult = "0";
+            const target_tw = document.getElementById('twlink');
+            const select = Math.floor(Math.random() * twwords.length);
+            target_tw.innerHTML = `<img src="../images/twimg.png">` + twwords[select][0];
+
+            function rewrite() {
+                now = Math.floor(Date.now() / 1000);
+                remainsecond = end - now;
+                remainresult = remainsecond.toLocaleString()
+                document.getElementById('remain').textContent = remainresult;
+                target_tw.setAttribute('href', `http://twitter.com/share?url=https://samidare74.web.fc2.com/games/remain.html&text=私の夏休みはあと` + remainresult + `秒。` + twwords[select][1]);
+            };
+
+            rewrite();
+
+            setInterval(() => {
+                rewrite();
+            },1000);
+        </script>
+    </body>
+</html>
