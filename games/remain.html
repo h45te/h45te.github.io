@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>
-            夏休み残り時間カウントダウン
+            進研模試まで残り何秒
         </title>
         <style>
             div {
@@ -24,7 +24,7 @@
         <meta charset="UTF-8">
     </head>
     <body>
-        <div style="font-size: 7vw;">夏休み残り時間：<span id="remain"></span>秒</div>
+        <div style="font-size: 7vw;">残り時間：<span id="remain"></span>秒</div>
         <div class="tw"><a class="tw" id="twlink"></a></div>
         <script>
             const twwords = [
@@ -34,7 +34,7 @@
                 ['キャリアを貪る！','残り時間でキャリアを貪る！']
             ];
 
-            const end = Math.floor(Date.UTC(2024, 7, 19, 8) / 1000);
+            const end = Math.floor(Date.UTC(2024, 10, 2, 8) / 1000);
             let now = 0;
             let remainsecond = 0;
             let remainresult = "0";
