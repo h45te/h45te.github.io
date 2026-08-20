@@ -1,6 +1,9 @@
 body {
     margin: 0px;
     background-color: #fffffc;
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
 }
 
 main {
